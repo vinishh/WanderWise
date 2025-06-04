@@ -1,4 +1,4 @@
-# 🌍 Wanderwise
+# 🌍 🇺🇸 Wanderwise
 
 > Discover and track the most beautiful places in the U.S. – powered by AI.
 
