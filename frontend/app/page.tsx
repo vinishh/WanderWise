@@ -766,7 +766,7 @@ export default function HomePage() {
       className="w-full"
     >
       <Geographies geography="https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json">
-        {({ geographies }) =>
+      {({ geographies }: { geographies: any[] }) =>
           geographies.map((geo) => {
             const stateName = geo.properties.name
             return (
