@@ -61,7 +61,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-
 import { auth } from '@/firebase'
 import { onAuthStateChanged, User } from 'firebase/auth'
 
@@ -71,15 +70,29 @@ export default function ItineraryPage() {
   const [result, setResult] = useState<string | null>(null)
   const [user, setUser] = useState<User | null>(null)
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
+  const [saved, setSaved] = useState<any[]>([])
 
-  // Listen to auth
+  // Listen to auth and fetch saved itineraries
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u))
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      setUser(u)
+      if (u) {
+        const token = await u.getIdToken()
+        try {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/saved-itineraries`, {
+            headers: { Authorization: token }
+          })
+          const data = await res.json()
+          setSaved(data.itineraries)
+        } catch (e) {
+          console.error('Failed to fetch saved itineraries')
+        }
+      }
+    })
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe()
     }
   }, [])
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -122,6 +135,13 @@ export default function ItineraryPage() {
 
     if (res.ok) {
       setSaveStatus('✅ Itinerary saved!')
+      // re-fetch saved itineraries after saving
+      const data = await res.json()
+      const refresh = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/saved-itineraries`, {
+        headers: { Authorization: token }
+      })
+      const savedData = await refresh.json()
+      setSaved(savedData.itineraries)
     } else {
       setSaveStatus('❌ Failed to save.')
     }
@@ -171,6 +191,20 @@ export default function ItineraryPage() {
                 <p className="text-sm mt-2 text-gray-300">{saveStatus}</p>
               )}
             </div>
+          </div>
+        )}
+
+        {saved.length > 0 && (
+          <div className="mt-16 text-left">
+            <h2 className="text-2xl font-bold mb-4">📚 Your Saved Itineraries</h2>
+            <ul className="space-y-4">
+              {saved.map((item) => (
+                <li key={item.id} className="bg-white/10 border border-white/10 rounded-xl p-4 text-sm whitespace-pre-wrap text-gray-100">
+                  <p className="text-pink-400 font-semibold mb-2">{item.query}</p>
+                  <div className="text-gray-300">{item.itinerary}</div>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

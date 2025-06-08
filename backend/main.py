@@ -397,3 +397,26 @@ async def delete_itinerary(request: Request):
         raise HTTPException(status_code=500, detail="Failed to delete itinerary")
 
 
+@app.get("/api/saved-itineraries")
+async def get_saved_itineraries(request: Request):
+    id_token = request.headers.get("Authorization")
+    if not id_token:
+        raise HTTPException(status_code=401, detail="Missing token")
+
+    try:
+        decoded = firebase_auth.verify_id_token(id_token)
+        uid = decoded["uid"]
+    except Exception as e:
+        print("Auth error:", e)
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    try:
+        res = supabase.table("saved_itineraries") \
+            .select("id, query, itinerary, created_at") \
+            .eq("user_id", uid) \
+            .order("created_at", desc=True) \
+            .execute()
+        return {"itineraries": res.data}
+    except Exception as e:
+        print("Fetch error:", e)
+        raise HTTPException(status_code=500, detail="Failed to fetch saved itineraries")
