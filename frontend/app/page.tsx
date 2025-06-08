@@ -776,7 +776,8 @@ export default function HomePage() {
                 onClick={() =>
                   router.push(`/state/${encodeURIComponent(stateName)}`)
                 }
-                onMouseEnter={(e) => {
+                onMouseEnter={(e: React.MouseEvent<SVGElement, MouseEvent>) => {
+
                   setTooltipContent(stateName)
                   setTooltipPosition({ x: e.clientX, y: e.clientY })
                 }}
