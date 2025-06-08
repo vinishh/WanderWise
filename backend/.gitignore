@@ -1,0 +1,19 @@
+# Python environment
+venv/
+.venv/
+**/__pycache__/
+
+# Node/Next.js
+node_modules/
+.next/
+
+# Environment files
+.env
+**/.env
+
+# Mac system files
+.DS_Store
+**/.DS_Store
+
+# Firebase admin key (this is the new line you must add)
+firebase-admin-key.json
