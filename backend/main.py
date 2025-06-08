@@ -50,7 +50,12 @@ app = FastAPI()
 # Allow frontend requests from localhost:3000
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    # allow_origins=["http://localhost:3000"],
+    allow_origins=[
+    "http://localhost:3000",
+    "https://wander-wise-c4t2wrzg3-vinishhs-projects.vercel.app"
+    ],
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
