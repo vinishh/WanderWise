@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "WanderWise",
   description: "Plan smarter U.S. trips with AI-generated spots & itineraries.",
   icons: {
-    icon: "/favicon.png", // path in public folder
+    icon: "/logo.png", // path in public folder
   },
 };
 
