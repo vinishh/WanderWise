@@ -4,7 +4,14 @@ import requests
 import firebase_admin
 from firebase_admin import credentials, auth as firebase_auth
 
-cred = credentials.Certificate("firebase-admin-key.json")
+# cred = credentials.Certificate("firebase-admin-key.json")
+import json
+import os
+from firebase_admin import credentials
+
+firebase_key = os.environ.get("FIREBASE_ADMIN_KEY")
+cred = credentials.Certificate(json.loads(firebase_key))
+
 firebase_admin.initialize_app(cred)
 
 import os
