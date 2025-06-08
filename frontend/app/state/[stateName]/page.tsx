@@ -208,7 +208,7 @@ export default function StatePage() {
       setUser(user)
       if (user) {
         const token = await user.getIdToken()
-        const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited`, {
           headers: { Authorization: token }
         })
         const data = await res.json()
@@ -224,7 +224,7 @@ export default function StatePage() {
       return signInWithPopup(auth, provider)
     }
     const token = await user.getIdToken()
-    const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visit', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

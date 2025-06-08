@@ -562,7 +562,7 @@ export default function HomePage() {
   const [newSpotState, setNewSpotState] = useState("")
 
   useEffect(() => {
-    fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/spots')
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/spots`)
       .then((res) => res.json())
       .then((data) => {
         setSpots(data)
@@ -578,7 +578,7 @@ export default function HomePage() {
       if (user) {
         const token = await user.getIdToken()
         try {
-          const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited', {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited`, {
             headers: { Authorization: token }
           })
           const data = await res.json()
@@ -598,7 +598,7 @@ export default function HomePage() {
   const handleMarkVisited = async (spotId: string) => {
     if (!user) return alert('Login to mark spots as visited.')
     const token = await user.getIdToken()
-    const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visit', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -612,7 +612,7 @@ export default function HomePage() {
   const handleAddSpot = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newSpotName.trim()) return
-    const res = await fetch("${process.env.NEXT_PUBLIC_API_BASE_URL}/api/add-spot", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/add-spot`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newSpotName, state: newSpotState || null })
