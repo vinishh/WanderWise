@@ -338,3 +338,62 @@ async def add_spot(req: AddSpotRequest):
     return spot_data
 
 
+from uuid import uuid4
+from fastapi import Request
+
+@app.post("/api/save-itinerary")
+async def save_itinerary(request: Request):
+    body = await request.json()
+    id_token = request.headers.get("Authorization")
+    query = body.get("query")
+    itinerary = body.get("itinerary")
+
+    if not id_token or not query or not itinerary:
+        raise HTTPException(status_code=400, detail="Missing data")
+
+    try:
+        decoded_token = firebase_auth.verify_id_token(id_token)
+        user_id = decoded_token["uid"]
+    except Exception as e:
+        print("Auth error:", e)
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    try:
+        supabase.table("saved_itineraries").insert({
+            "id": str(uuid4()),
+            "user_id": user_id,
+            "query": query,
+            "itinerary": itinerary
+        }).execute()
+
+        return {"message": "Itinerary saved!"}
+    except Exception as e:
+        print("Insert error:", e)
+        raise HTTPException(status_code=500, detail="Failed to save itinerary")
+
+
+@app.delete("/api/delete-itinerary")
+async def delete_itinerary(request: Request):
+    body = await request.json()
+    id_token = request.headers.get("Authorization")
+    itinerary_id = body.get("id")
+
+    if not id_token or not itinerary_id:
+        raise HTTPException(status_code=400, detail="Missing data")
+
+    try:
+        decoded_token = firebase_auth.verify_id_token(id_token)
+        user_id = decoded_token["uid"]
+    except Exception as e:
+        print("Auth error:", e)
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    try:
+        supabase.table("saved_itineraries").delete() \
+            .eq("id", itinerary_id).eq("user_id", user_id).execute()
+        return {"message": "Itinerary deleted!"}
+    except Exception as e:
+        print("Delete error:", e)
+        raise HTTPException(status_code=500, detail="Failed to delete itinerary")
+
+

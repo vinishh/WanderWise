@@ -61,16 +61,27 @@
 'use client'
 
 import { useState } from 'react'
+import { auth } from '@/firebase'
+import { onAuthStateChanged, User } from 'firebase/auth'
 
 export default function ItineraryPage() {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
+  const [user, setUser] = useState<User | null>(null)
+  const [saveStatus, setSaveStatus] = useState<string | null>(null)
+
+  // Listen to auth
+  useState(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u))
+    return () => unsub()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setResult(null)
+    setSaveStatus(null)
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/itinerary`, {
@@ -78,13 +89,37 @@ export default function ItineraryPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
       })
-      
       const data = await res.json()
       setResult(data.itinerary)
     } catch (err) {
       setResult('❌ Failed to generate itinerary. Try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleSave = async () => {
+    if (!user || !result) return alert('Please log in to save your itinerary.')
+
+    const token = await user.getIdToken()
+    setSaveStatus('Saving...')
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/save-itinerary`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token
+      },
+      body: JSON.stringify({
+        prompt: query,
+        itinerary: result
+      })
+    })
+
+    if (res.ok) {
+      setSaveStatus('✅ Itinerary saved!')
+    } else {
+      setSaveStatus('❌ Failed to save.')
     }
   }
 
@@ -121,6 +156,17 @@ export default function ItineraryPage() {
         {result && (
           <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl text-left whitespace-pre-line text-sm sm:text-base text-gray-200">
             {result}
+            <div className="mt-6 text-right">
+              <button
+                onClick={handleSave}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition"
+              >
+                💾 Save Itinerary
+              </button>
+              {saveStatus && (
+                <p className="text-sm mt-2 text-gray-300">{saveStatus}</p>
+              )}
+            </div>
           </div>
         )}
       </div>

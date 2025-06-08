@@ -28,16 +28,13 @@ all_states = [
     "Wisconsin", "Wyoming"
 ]
 
-# Step 1: Wipe all existing spots
-# def clear_spots():
-#     print("🗑️ Deleting all existing spots...")
-#     supabase.table("spots").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
-#     print("✅ All existing spots removed.\n")
-
-
-# Step 2: Generate spots via OpenAI
-def generate_spots(state: str):
-    prompt = f"List 1 must-visit travel spots in {state}, U.S. with name and category (either Natural or Man-made). Return as JSON like: [{{'name': '', 'category': ''}}, ...]"
+# Generate a single must-visit spot using OpenAI
+def generate_spot(state: str):
+    prompt = (
+        f"What's the single most iconic must-visit travel spot in {state}, USA? "
+        f"Return a JSON list with just one object that has 'name' and 'category' (e.g., Natural, Man-made, etc.). "
+        f"Example: [{{'name': 'Grand Canyon', 'category': 'Natural'}}]"
+    )
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -45,12 +42,12 @@ def generate_spots(state: str):
         )
         content = response['choices'][0]['message']['content']
         spots = eval(content)
-        return spots
+        return spots[0] if spots else None
     except Exception as e:
         print(f"❌ OpenAI error for {state}: {e}")
-        return []
+        return None
 
-# Step 3: Get Unsplash image
+# Get image and attribution from Unsplash
 def get_unsplash_image(query: str):
     try:
         print(f"🔍 Searching Unsplash for: {query}")
@@ -60,34 +57,24 @@ def get_unsplash_image(query: str):
         data = res.json()
         results = data.get("results")
         if results:
-            img_url = results[0]["urls"]["regular"]
-            download_url = results[0]["links"]["download_location"]
-            photographer = results[0]["user"]["name"]
-            photographer_url = results[0]["user"]["links"]["html"]
-
-            # ✅ Trigger Unsplash download tracking
-            requests.get(f"{download_url}&client_id={UNSPLASH_ACCESS_KEY}")
-
-            print(f"✅ Found image: {img_url} by {photographer}")
+            img = results[0]
+            requests.get(f"{img['links']['download_location']}&client_id={UNSPLASH_ACCESS_KEY}")
             return {
-                "image_url": img_url,
-                "photographer": photographer,
-                "photographer_url": photographer_url
+                "image_url": img["urls"]["regular"],
+                "photographer": img["user"]["name"],
+                "photographer_url": img["user"]["links"]["html"]
             }
-        else:
-            print(f"⚠️ No image found for: {query}")
     except Exception as e:
         print(f"❌ Unsplash error for '{query}': {e}")
 
-    # Return fallback + placeholder attribution
+    # Fallback
     return {
         "image_url": "https://source.unsplash.com/600x400/?landmark,nature",
         "photographer": "Unsplash",
         "photographer_url": "https://unsplash.com"
     }
 
-
-# Step 4: Insert spot
+# Insert into Supabase
 def insert_spot(spot, state):
     try:
         img_data = get_unsplash_image(f"{spot['name']} {state}")
@@ -102,18 +89,16 @@ def insert_spot(spot, state):
         }).execute()
 
         print(f"✅ Inserted: {spot['name']} in {state}")
-
     except Exception as e:
-        print(f"❌ Failed to insert {spot['name']} in {state}: {e}")
+        print(f"❌ Failed to insert spot in {state}: {e}")
 
-
-# Run everything
+# Run for all states
 if __name__ == "__main__":
-    # clear_spots()
-
     for state in all_states:
-        print(f"\n🌍 Seeding 10 spots for {state}...")
-        spots = generate_spots(state)
-        for spot in spots:
+        print(f"\n🌎 Seeding 1 iconic spot for {state}...")
+        spot = generate_spot(state)
+        if spot:
             insert_spot(spot, state)
+        else:
+            print(f"⚠️ No spot generated for {state}")
         time.sleep(1)
