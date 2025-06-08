@@ -72,10 +72,13 @@ export default function ItineraryPage() {
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
 
   // Listen to auth
-  useState(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUser(u))
-    return () => unsub()
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u))
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe()
+    }
   }, [])
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
