@@ -115,7 +115,7 @@ export default function ItineraryPage() {
         Authorization: token
       },
       body: JSON.stringify({
-        prompt: query,
+        query,
         itinerary: result
       })
     })
