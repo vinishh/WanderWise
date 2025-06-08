@@ -31,6 +31,7 @@ export default function ProfilePage() {
           setVisitedSpots(data.spots)
           const states = Array.from(new Set(data.spots.map((s: Spot) => s.state)))
           setVisitedStates(states)
+          
         } catch (err) {
           console.error('Error loading visited spots:', err)
         }
