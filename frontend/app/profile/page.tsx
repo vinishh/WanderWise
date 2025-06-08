@@ -24,7 +24,7 @@ export default function ProfilePage() {
       if (user) {
         const token = await user.getIdToken()
         try {
-          const res = await fetch('http://localhost:8000/api/visited-full', {
+          const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited-full', {
             headers: { Authorization: token }
           })
           const data = await res.json()
@@ -148,7 +148,7 @@ export default function ProfilePage() {
             <button
               onClick={async () => {
                 const token = await user.getIdToken()
-                const res = await fetch('http://localhost:8000/api/visited', {
+                const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited', {
                   method: 'DELETE',
                   headers: { Authorization: token }
                 })

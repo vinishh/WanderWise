@@ -228,7 +228,7 @@ export default function SpotPage() {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/spot/${spotId}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/spot/${spotId}`)
       .then((res) => res.json())
       .then((data) => {
         setSpot(data)
@@ -245,7 +245,7 @@ export default function SpotPage() {
       setUser(user)
       if (user && spotId) {
         const token = await user.getIdToken()
-        const res = await fetch('http://localhost:8000/api/visited', {
+        const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited', {
           headers: { Authorization: token }
         })
         const data = await res.json()
@@ -261,7 +261,7 @@ export default function SpotPage() {
       return signInWithPopup(auth, provider)
     }
     const token = await user.getIdToken()
-    const res = await fetch('http://localhost:8000/api/visit', {
+    const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

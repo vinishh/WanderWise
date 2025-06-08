@@ -73,11 +73,12 @@ export default function ItineraryPage() {
     setResult(null)
 
     try {
-      const res = await fetch('http://localhost:8000/api/itinerary', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/itinerary`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
       })
+      
       const data = await res.json()
       setResult(data.itinerary)
     } catch (err) {

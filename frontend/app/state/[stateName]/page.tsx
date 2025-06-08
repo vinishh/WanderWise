@@ -194,7 +194,7 @@ export default function StatePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/spots?state=${decodedStateName}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/spots?state=${decodedStateName}`)
       .then((res) => res.json())
       .then((data) => {
         setSpots(data)
@@ -208,7 +208,7 @@ export default function StatePage() {
       setUser(user)
       if (user) {
         const token = await user.getIdToken()
-        const res = await fetch('http://localhost:8000/api/visited', {
+        const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited', {
           headers: { Authorization: token }
         })
         const data = await res.json()
@@ -224,7 +224,7 @@ export default function StatePage() {
       return signInWithPopup(auth, provider)
     }
     const token = await user.getIdToken()
-    const res = await fetch('http://localhost:8000/api/visit', {
+    const res = await fetch('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
