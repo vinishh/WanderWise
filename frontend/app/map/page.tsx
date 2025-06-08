@@ -18,7 +18,7 @@ export default function MapPage() {
       <h1 className="text-2xl font-bold mb-4">Interactive U.S. Map</h1>
       <ComposableMap projection="geoAlbersUsa" width={980} height={600}>
         <Geographies geography={geoUrl}>
-          {({ geographies }) =>
+          {({ geographies }: { geographies: any[] }) =>
             geographies.map((geo) => {
               const stateName = geo.properties.name
               return (
