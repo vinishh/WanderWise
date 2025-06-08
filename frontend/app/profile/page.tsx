@@ -12,17 +12,10 @@ type Spot = {
   image_url: string
 }
 
-type Itinerary = {
-  id: string
-  query: string
-  itinerary: string
-}
-
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null)
   const [visitedSpots, setVisitedSpots] = useState<Spot[]>([])
   const [visitedStates, setVisitedStates] = useState<string[]>([])
-  const [savedItineraries, setSavedItineraries] = useState<Itinerary[]>([])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -30,30 +23,22 @@ export default function ProfilePage() {
 
       if (user) {
         const token = await user.getIdToken()
-
         try {
-          // Fetch visited spots
-          const visitedRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited-full`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/visited-full`, {
             headers: { Authorization: token }
           })
-          const visitedData = await visitedRes.json()
-          setVisitedSpots(visitedData.spots)
-          const states = Array.from(new Set(visitedData.spots.map((s: Spot) => s.state)))
+          const data = await res.json()
+          setVisitedSpots(data.spots)
+          const states = Array.from(new Set(data.spots.map((s: Spot) => s.state))) as string[]
           setVisitedStates(states)
-
-          // Fetch saved itineraries
-          const itinRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/saved-itineraries`, {
-            headers: { Authorization: token }
-          })
-          const itinData = await itinRes.json()
-          setSavedItineraries(itinData.itineraries)
+          
+          
         } catch (err) {
-          console.error('Error loading data:', err)
+          console.error('Error loading visited spots:', err)
         }
       } else {
         setVisitedSpots([])
         setVisitedStates([])
-        setSavedItineraries([])
       }
     })
 
@@ -66,7 +51,6 @@ export default function ProfilePage() {
         setUser(null)
         setVisitedSpots([])
         setVisitedStates([])
-        setSavedItineraries([])
       })
       .catch((err) => console.error('Logout error:', err))
   }
@@ -180,21 +164,6 @@ export default function ProfilePage() {
           </>
         ) : (
           <p className="text-gray-400 text-lg">You haven’t marked any spots yet.</p>
-        )}
-
-        {/* Saved Itineraries */}
-        {savedItineraries.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-semibold mb-4">📚 Saved Itineraries</h2>
-            <ul className="space-y-6">
-              {savedItineraries.map((item) => (
-                <li key={item.id} className="bg-white/10 border border-white/10 rounded-xl p-4 text-sm whitespace-pre-wrap text-gray-100">
-                  <p className="text-pink-400 font-semibold mb-2">{item.query}</p>
-                  <div className="text-gray-300">{item.itinerary}</div>
-                </li>
-              ))}
-            </ul>
-          </div>
         )}
       </div>
     </main>
