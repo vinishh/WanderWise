@@ -25,7 +25,7 @@ import openai
 
 # Load environment variables from .env file
 load_dotenv()
-print("🔑 Loaded Unsplash Key:", os.getenv("UNSPLASH_ACCESS_KEY"))
+print(" Loaded Unsplash Key:", os.getenv("UNSPLASH_ACCESS_KEY"))
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -38,7 +38,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-# Print for sanity check (optional, can be removed later)
+
 print("Supabase URL:", SUPABASE_URL)
 
 # Initialize Supabase client
@@ -82,7 +82,6 @@ def get_spots(state: str = None):
 
     url = f"{SUPABASE_URL}/rest/v1/spots"
 
-    # Optional filter by state
     params = {}
     if state:
         params["state"] = f"eq.{state}"
@@ -107,7 +106,7 @@ async def generate_itinerary(request: Request):
 
     try:
         response = openai.ChatCompletion.create(
-#            model="gpt-4",  # optionally change to "gpt-3.5-turbo" if needed
+#            model="gpt-4",  # or "gpt-3.5-turbo" 
 	    model="gpt-3.5-turbo",
 
             messages=[
@@ -121,7 +120,7 @@ async def generate_itinerary(request: Request):
         return {"itinerary": ai_reply}
 
     except Exception as e:
-        print("❌ OpenAI error:", str(e))  # ← add this to log the real issue
+        print(" OpenAI error:", str(e)) 
         return {"error": "Something went wrong generating itinerary."}
 
 
@@ -152,7 +151,6 @@ async def mark_spot_visited(request: Request):
 
     # Save to visited_spots
     try:
-        # Optional: check if already visited first
         response = supabase.from_("visited_spots").insert({
             "user_id": user_id,
             "spot_id": spot_id
@@ -266,7 +264,7 @@ def get_spot_by_id(spot_id: str):
             supabase.table("spots").update({"description": description}).eq("id", spot_id).execute()
             spot["description"] = description
         except Exception as e:
-            print("❌ AI Error:", e)
+            print(" AI Error:", e)
             spot["description"] = "Description unavailable."
 
     return spot
@@ -291,7 +289,7 @@ async def add_spot(req: AddSpotRequest):
     if existing.data and len(existing.data) > 0:
         return JSONResponse({"error": "Spot already exists"}, status_code=409)
 
-    # 🧠 Generate category using OpenAI
+
     try:
         prompt = f"What category best describes the travel destination: '{name}'? Respond with one word like 'Nature', 'Museum', 'Landmark', 'Park', etc."
         ai_resp = openai.ChatCompletion.create(
@@ -303,7 +301,7 @@ async def add_spot(req: AddSpotRequest):
         print("OpenAI category error:", e)
         category = "Other"
 
-    # 🖼️ Try fetching a real image from Unsplash
+    # fetching a real image from Unsplash
     try:
         url = f"https://api.unsplash.com/search/photos?query={name} {state or ''}&per_page=1&client_id={UNSPLASH_ACCESS_KEY}"
         res = requests.get(url)
@@ -323,7 +321,7 @@ async def add_spot(req: AddSpotRequest):
         photographer = None
         photographer_url = None
 
-    # 🧾 Insert into Supabase
+    #  Insert into Supabase
     spot_data = {
         "id": str(uuid4()),
         "name": name,
