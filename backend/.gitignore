@@ -1,4 +1,4 @@
-# Python environment
+
 venv/
 .venv/
 **/__pycache__/
