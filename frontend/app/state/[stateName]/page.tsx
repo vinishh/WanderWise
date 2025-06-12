@@ -269,7 +269,8 @@ export default function StatePage() {
                 key={spot.id}
                 className="backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl p-4 shadow-lg hover:scale-105 transition relative group"
               >
-                <a href={`/spot/${spot.id}`}>
+                <a href={`/spot/${spot.id}?from=${stateName}`}>
+
                   <img
                     src={spot.image_url}
                     alt={spot.name}

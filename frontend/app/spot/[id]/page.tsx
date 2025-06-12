@@ -203,7 +203,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { auth, provider } from '@/firebase'
 import { onAuthStateChanged, signInWithPopup, User } from 'firebase/auth'
 
@@ -221,6 +221,8 @@ type Spot = {
 export default function SpotPage() {
   const params = useParams()
   const spotId = params.id as string
+  const searchParams = useSearchParams()
+  const from = searchParams.get('from')
 
   const [spot, setSpot] = useState<Spot | null>(null)
   const [loading, setLoading] = useState(true)
@@ -277,6 +279,11 @@ export default function SpotPage() {
     }
   }
 
+  const backHref =
+    from === 'state' && spot?.state
+      ? `/state/${encodeURIComponent(spot.state)}`
+      : '/'
+
   if (loading) return <div className="p-10 text-white">Loading...</div>
   if (!spot) return <div className="p-10 text-white">Spot not found.</div>
 
@@ -303,6 +310,14 @@ export default function SpotPage() {
       {/* Content */}
       <section className="max-w-3xl mx-auto p-6 -mt-16 relative z-10">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl shadow-xl">
+          {/* Back button */}
+          <a
+            href={backHref}
+            className="text-sm text-purple-400 underline mb-4 inline-block"
+          >
+            ← Back
+          </a>
+
           <h2 className="text-xl font-semibold text-white mb-4">📍 About this place</h2>
           <p className="text-gray-300 leading-relaxed whitespace-pre-line mb-6">
             {spot.description || 'No description available.'}
@@ -346,3 +361,4 @@ export default function SpotPage() {
     </main>
   )
 }
+

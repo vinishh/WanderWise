@@ -909,7 +909,7 @@ export default function HomePage() {
             transition={{ duration: 0.3 }}
             className="relative overflow-hidden group rounded-2xl border border-white/20 backdrop-blur-md bg-white/10 shadow-xl"
           >
-            <a href={`/spot/${spot.id}`} className="block">
+            <a href={`/spot/${spot.id}?from=home`} className="block">
               <div className="relative">
                 <img
                   src={spot.image_url}
