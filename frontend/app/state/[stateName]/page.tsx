@@ -245,13 +245,13 @@ export default function StatePage() {
       {/* Back to Home Button */}
       <a
         href="/"
-        className="absolute top-6 left-6 text-white text-sm hover:text-purple-400 transition flex items-center"
+        className="absolute top-6 left-6 bg-white/10 text-white px-4 py-2 rounded-full text-sm hover:bg-purple-600 hover:text-white transition flex items-center shadow"
       >
         ← Back to Home
       </a>
-  
+
       {/* Hero Section */}
-      <section className="relative py-24 text-center">
+      <section className="relative pt-32 pb-20 text-center">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-black/60 to-black" />
         <h1 className="relative z-10 text-5xl font-extrabold text-white drop-shadow-xl">
           {decodedStateName}
@@ -260,7 +260,7 @@ export default function StatePage() {
           Explore top destinations in this state
         </p>
       </section>
-  
+
       {/* Spot List Section */}
       <section className="max-w-7xl mx-auto px-6 pb-20">
         {loading ? (
@@ -295,7 +295,7 @@ export default function StatePage() {
                 ) : (
                   <button
                     onClick={() => handleMarkVisited(spot.id)}
-                    className="absolute bottom-3 right-3 bg-green-600 hover:bg-green-700 px-3 py-1 text-xs rounded text-white transition"
+                    className="absolute bottom-3 right-3 bg-green-600 hover:bg-green-700 px-4 py-2 text-xs rounded text-white transition"
                   >
                     ✅ Mark
                   </button>
@@ -307,5 +307,4 @@ export default function StatePage() {
       </section>
     </main>
   )
-  
 }
