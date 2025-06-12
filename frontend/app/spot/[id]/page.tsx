@@ -313,7 +313,7 @@ export default function SpotPage() {
           {/* Back button */}
           <a
             href={backHref}
-            className="text-sm text-purple-400 underline mb-4 inline-block"
+            className="text-sm text-black-600 underline mb-4 inline-block"
           >
             ← Back
           </a>

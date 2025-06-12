@@ -72,7 +72,6 @@ export default function ItineraryPage() {
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
   const [saved, setSaved] = useState<any[]>([])
 
-  // Listen to auth and fetch saved itineraries
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setUser(u)
@@ -135,8 +134,6 @@ export default function ItineraryPage() {
 
     if (res.ok) {
       setSaveStatus('✅ Itinerary saved!')
-      // re-fetch saved itineraries after saving
-      const data = await res.json()
       const refresh = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/saved-itineraries`, {
         headers: { Authorization: token }
       })
@@ -149,11 +146,21 @@ export default function ItineraryPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-neutral-900 text-white py-16 px-4">
-      <div className="max-w-3xl mx-auto text-center">
-        <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-pink-500 to-yellow-400 bg-clip-text text-transparent drop-shadow">
-          🧠 AI Travel Itinerary
-        </h1>
-        <p className="text-gray-400 text-lg mb-10">
+      <div className="max-w-3xl mx-auto">
+        {/* Top Header Row with Back Button and Title */}
+        <div className="flex items-center justify-between mb-6">
+          <a
+            href="/"
+            className="text-sm text-white hover:text-purple-400 transition"
+          >
+            ← Back to Home
+          </a>
+          <h1 className="text-3xl sm:text-5xl font-extrabold bg-gradient-to-r from-pink-500 to-yellow-400 bg-clip-text text-transparent drop-shadow text-center w-full -ml-6 sm:-ml-12">
+            🧠 AI Travel Itinerary
+          </h1>
+        </div>
+
+        <p className="text-gray-400 text-lg mb-10 text-center">
           Describe your dream trip and let WanderWise build the perfect itinerary for you.
         </p>
 
