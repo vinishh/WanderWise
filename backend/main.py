@@ -310,7 +310,10 @@ async def add_spot(req: AddSpotRequest):
         img_url = data["results"][0]["urls"]["regular"]
         photographer = data["results"][0]["user"]["name"]
         # photographer_url = data["results"][0]["user"]["links"]["html"]
-        photographer_url = data["results"][0]["user"]["links"]["html"] + "?utm_source=wanderwise&utm_medium=referral"
+        # photographer_url = data["results"][0]["user"]["links"]["html"] + "?utm_source=wanderwise&utm_medium=referral"
+        username = data["results"][0]["user"]["username"]
+        photographer_url = f"https://unsplash.com/@{username}?utm_source=wanderwise&utm_medium=referral"
+
 
 
         # Track Unsplash usage
@@ -321,7 +324,7 @@ async def add_spot(req: AddSpotRequest):
         print("Unsplash error:", e)
         img_url = "https://source.unsplash.com/600x400/?travel"
         photographer = None
-        photographer_url = None
+        photographer_url = "https://unsplash.com/?utm_source=wanderwise&utm_medium=referral"
 
     #  Insert into Supabase
     spot_data = {

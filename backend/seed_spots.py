@@ -63,10 +63,15 @@ def get_unsplash_image(query: str):
             # Trigger Unsplash download tracking
             requests.get(f"{img['links']['download_location']}&client_id={UNSPLASH_ACCESS_KEY}")
 
+            # Get proper photographer attribution with UTM link
+            username = img["user"]["username"]
+            photographer_name = img["user"]["name"]
+            photographer_url = f"https://unsplash.com/@{username}?utm_source=wanderwise&utm_medium=referral"
+
             return {
                 "image_url": img["urls"]["regular"],
-                "photographer": img["user"]["name"],
-                "photographer_url": img["user"]["links"]["html"] + "?utm_source=wanderwise&utm_medium=referral"
+                "photographer": photographer_name,
+                "photographer_url": photographer_url
             }
 
     except Exception as e:
@@ -78,6 +83,7 @@ def get_unsplash_image(query: str):
         "photographer": "Unsplash",
         "photographer_url": "https://unsplash.com/?utm_source=wanderwise&utm_medium=referral"
     }
+
 
 
 # Insert into Supabase
