@@ -31,8 +31,6 @@ export default function ProfilePage() {
           setVisitedSpots(data.spots)
           const states = Array.from(new Set(data.spots.map((s: Spot) => s.state))) as string[]
           setVisitedStates(states)
-          
-          
         } catch (err) {
           console.error('Error loading visited spots:', err)
         }
@@ -72,12 +70,17 @@ export default function ProfilePage() {
 
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
-          <div>
-            <h1 className="text-4xl font-extrabold">👤 Your WanderWise Profile</h1>
-            <p className="text-lg text-gray-400 mt-1">
-              Welcome, <span className="font-bold text-white">{user.displayName}</span>
-            </p>
-            <p className="text-sm text-gray-500">{user.email}</p>
+          <div className="flex items-center gap-4">
+            <a href="/" className="text-white text-sm hover:text-purple-400 transition">
+              ← Back to Home
+            </a>
+            <div>
+              <h1 className="text-4xl font-extrabold">👤 Your WanderWise Profile</h1>
+              <p className="text-lg text-gray-400 mt-1">
+                Welcome, <span className="font-bold text-white">{user.displayName}</span>
+              </p>
+              <p className="text-sm text-gray-500">{user.email}</p>
+            </div>
           </div>
           {user.photoURL && (
             <img

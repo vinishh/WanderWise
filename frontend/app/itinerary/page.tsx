@@ -151,7 +151,7 @@ export default function ItineraryPage() {
         <div className="flex items-center justify-between mb-6">
           <a
             href="/"
-            className="text-sm text-white hover:text-purple-400 transition"
+            className="text-sm text-white hover:text-purple-400 transition mt-4"
           >
             ← Back to Home
           </a>
