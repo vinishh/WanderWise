@@ -172,10 +172,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { auth } from '@/firebase'
+import { useParams, useRouter } from 'next/navigation'
+import { auth, provider } from '@/firebase'
 import { onAuthStateChanged, signInWithPopup, User } from 'firebase/auth'
-import { provider } from '@/firebase'
 
 type Spot = {
   id: string
@@ -187,6 +186,7 @@ type Spot = {
 
 export default function StatePage() {
   const { stateName } = useParams()
+  const router = useRouter()
   const decodedStateName = decodeURIComponent(stateName as string)
   const [spots, setSpots] = useState<Spot[]>([])
   const [visited, setVisited] = useState<string[]>([])
@@ -242,13 +242,13 @@ export default function StatePage() {
 
   return (
     <main className="relative min-h-screen bg-gradient-to-br from-black via-zinc-900 to-neutral-900 text-white">
-      {/* Back to Home Button */}
-      <a
-        href="/"
-        className="absolute top-6 left-6 bg-white/10 text-white px-4 py-2 rounded-full text-sm hover:bg-purple-600 hover:text-white transition flex items-center shadow"
+      {/* Back Button */}
+      <button
+        onClick={() => router.push('/')}
+        className="absolute top-20 left-6 bg-white/10 text-white px-5 py-2 rounded-full text-base hover:bg-purple-600 hover:text-white transition flex items-center shadow z-50"
       >
         ← Back to Home
-      </a>
+      </button>
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 text-center">
