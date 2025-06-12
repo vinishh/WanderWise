@@ -241,7 +241,15 @@ export default function StatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-neutral-900 text-white">
+    <main className="relative min-h-screen bg-gradient-to-br from-black via-zinc-900 to-neutral-900 text-white">
+      {/* Back to Home Button */}
+      <a
+        href="/"
+        className="absolute top-6 left-6 text-white text-sm hover:text-purple-400 transition flex items-center"
+      >
+        ← Back to Home
+      </a>
+  
       {/* Hero Section */}
       <section className="relative py-24 text-center">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-black/60 to-black" />
@@ -252,7 +260,7 @@ export default function StatePage() {
           Explore top destinations in this state
         </p>
       </section>
-
+  
       {/* Spot List Section */}
       <section className="max-w-7xl mx-auto px-6 pb-20">
         {loading ? (
@@ -269,10 +277,7 @@ export default function StatePage() {
                 key={spot.id}
                 className="backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl p-4 shadow-lg hover:scale-105 transition relative group"
               >
-                {/* <a href={`/spot/${spot.id}?from=${stateName}`}> */}
                 <a href={`/spot/${spot.id}?from=state`} className="block">
-
-
                   <img
                     src={spot.image_url}
                     alt={spot.name}
@@ -302,4 +307,5 @@ export default function StatePage() {
       </section>
     </main>
   )
+  
 }
