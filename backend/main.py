@@ -309,7 +309,9 @@ async def add_spot(req: AddSpotRequest):
         data = res.json()
         img_url = data["results"][0]["urls"]["regular"]
         photographer = data["results"][0]["user"]["name"]
-        photographer_url = data["results"][0]["user"]["links"]["html"]
+        # photographer_url = data["results"][0]["user"]["links"]["html"]
+        photographer_url = data["results"][0]["user"]["links"]["html"] + "?utm_source=wanderwise&utm_medium=referral"
+
 
         # Track Unsplash usage
         download_url = data["results"][0]["links"]["download_location"]

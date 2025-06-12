@@ -56,23 +56,29 @@ def get_unsplash_image(query: str):
         res.raise_for_status()
         data = res.json()
         results = data.get("results")
+
         if results:
             img = results[0]
+
+            # Trigger Unsplash download tracking
             requests.get(f"{img['links']['download_location']}&client_id={UNSPLASH_ACCESS_KEY}")
+
             return {
                 "image_url": img["urls"]["regular"],
                 "photographer": img["user"]["name"],
-                "photographer_url": img["user"]["links"]["html"]
+                "photographer_url": img["user"]["links"]["html"] + "?utm_source=wanderwise&utm_medium=referral"
             }
+
     except Exception as e:
         print(f"❌ Unsplash error for '{query}': {e}")
 
-    # Fallback
+    # Fallback with proper attribution
     return {
         "image_url": "https://source.unsplash.com/600x400/?landmark,nature",
         "photographer": "Unsplash",
-        "photographer_url": "https://unsplash.com"
+        "photographer_url": "https://unsplash.com/?utm_source=wanderwise&utm_medium=referral"
     }
+
 
 # Insert into Supabase
 def insert_spot(spot, state):

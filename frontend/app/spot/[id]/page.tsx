@@ -321,7 +321,7 @@ export default function SpotPage() {
               </a>{' '}
               on{' '}
               <a
-                href="https://unsplash.com"
+                href="https://unsplash.com/?utm_source=wanderwise&utm_medium=referral"
                 className="underline"
                 target="_blank"
                 rel="noopener noreferrer"
