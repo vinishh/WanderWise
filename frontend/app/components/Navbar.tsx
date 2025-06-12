@@ -27,7 +27,7 @@ export default function Navbar() {
           WanderWise
         </h1>
         <nav className="flex items-center gap-5 text-sm">
-          <a href="/map" className="hover:text-purple-400 transition">🗺️ Map</a>
+          <a href="/#map" className="hover:text-purple-400 transition">🗺️ Map</a>
           <a href="/itinerary" className="hover:text-purple-400 transition">✨ Itinerary</a>
           <a href="/profile" className="hover:text-purple-400 transition">👤 Profile</a>
           {user ? (
