@@ -9,11 +9,6 @@ import json
 import os
 from firebase_admin import credentials
 
-firebase_key = os.environ.get("FIREBASE_ADMIN_KEY")
-cred = credentials.Certificate(json.loads(firebase_key))
-
-firebase_admin.initialize_app(cred)
-
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -23,16 +18,17 @@ from supabase import create_client, Client
 import httpx
 import openai
 
+firebase_key = os.environ.get("FIREBASE_ADMIN_KEY")
+if firebase_key:
+    cred = credentials.Certificate(json.loads(firebase_key))
+    firebase_admin.initialize_app(cred)
+
+
 # Load environment variables from .env file
 load_dotenv()
 print(" Loaded Unsplash Key:", os.getenv("UNSPLASH_ACCESS_KEY"))
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
-
-
-
 
 # Supabase credentials
 SUPABASE_URL = os.getenv("SUPABASE_URL")
