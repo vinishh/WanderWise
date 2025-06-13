@@ -5,9 +5,10 @@ import requests
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
-# Env variables
+# API keys
 openai.api_key = os.getenv("OPENAI_API_KEY")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
@@ -16,7 +17,7 @@ UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
 # Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# All 50 states
+# All 50 US states
 all_states = [
     "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
     "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
@@ -28,12 +29,12 @@ all_states = [
     "Wisconsin", "Wyoming"
 ]
 
-# Generate a single must-visit spot using OpenAI
-def generate_spot(state: str):
+# Step 1: Generate 10 must-visit spots using OpenAI
+def generate_spots(state: str):
     prompt = (
-        f"What's the single most iconic must-visit travel spot in {state}, USA? "
-        f"Return a JSON list with just one object that has 'name' and 'category' (e.g., Natural, Man-made, etc.). "
-        f"Example: [{{'name': 'Grand Canyon', 'category': 'Natural'}}]"
+        f"List 10 must-visit travel spots in {state}, USA. "
+        f"Return a JSON list of 10 objects, each with a 'name' and 'category' (e.g., Natural, Man-made, Historical, etc.). "
+        f"Example: [{{'name': 'Grand Canyon', 'category': 'Natural'}}, ...]"
     )
     try:
         response = openai.ChatCompletion.create(
@@ -42,16 +43,16 @@ def generate_spot(state: str):
         )
         content = response['choices'][0]['message']['content']
         spots = eval(content)
-        return spots[0] if spots else None
+        return spots if isinstance(spots, list) else []
     except Exception as e:
         print(f"❌ OpenAI error for {state}: {e}")
-        return None
+        return []
 
-# Get image and attribution from Unsplash
+# Step 2: Get Unsplash image with UTM attribution
 def get_unsplash_image(query: str):
     try:
         print(f"🔍 Searching Unsplash for: {query}")
-        url = f"https://api.unsplash.com/search/photos?query={query}&per_page=1&client_id={UNSPLASH_ACCESS_KEY}"
+        url = f"https://api.unsplash.com/search/photos?query={query} travel destination&per_page=1&order_by=relevant&client_id={UNSPLASH_ACCESS_KEY}"
         res = requests.get(url)
         res.raise_for_status()
         data = res.json()
@@ -59,18 +60,16 @@ def get_unsplash_image(query: str):
 
         if results:
             img = results[0]
-
-            # Trigger Unsplash download tracking
+            # Download tracking
             requests.get(f"{img['links']['download_location']}&client_id={UNSPLASH_ACCESS_KEY}")
 
-            # Get proper photographer attribution with UTM link
             username = img["user"]["username"]
-            photographer_name = img["user"]["name"]
+            name = img["user"]["name"]
             photographer_url = f"https://unsplash.com/@{username}?utm_source=wanderwise&utm_medium=referral"
 
             return {
                 "image_url": img["urls"]["regular"],
-                "photographer": photographer_name,
+                "photographer": name,
                 "photographer_url": photographer_url
             }
 
@@ -84,9 +83,7 @@ def get_unsplash_image(query: str):
         "photographer_url": "https://unsplash.com/?utm_source=wanderwise&utm_medium=referral"
     }
 
-
-
-# Insert into Supabase
+# Step 3: Insert into Supabase
 def insert_spot(spot, state):
     try:
         img_data = get_unsplash_image(f"{spot['name']} {state}")
@@ -107,10 +104,8 @@ def insert_spot(spot, state):
 # Run for all states
 if __name__ == "__main__":
     for state in all_states:
-        print(f"\n🌎 Seeding 1 iconic spot for {state}...")
-        spot = generate_spot(state)
-        if spot:
+        print(f"\n🌎 Seeding 10 iconic spots for {state}...")
+        spots = generate_spots(state)
+        for spot in spots:
             insert_spot(spot, state)
-        else:
-            print(f"⚠️ No spot generated for {state}")
-        time.sleep(1)
+            time.sleep(1)
