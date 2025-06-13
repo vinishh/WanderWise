@@ -875,13 +875,29 @@ export default function HomePage() {
         onChange={(e) => setNewSpotName(e.target.value)}
         required
       />
-      <input
-        type="text"
-        placeholder="🗺️ State"
-        className="w-full rounded-md px-4 py-3 bg-white text-black placeholder-gray-500 shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+      <select
         value={newSpotState}
         onChange={(e) => setNewSpotState(e.target.value)}
-      />
+        required
+        className="w-full rounded-md px-4 py-3 bg-white text-black shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+      >
+        <option value="">🗺️ Select a State</option>
+        {[
+          "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+          "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
+          "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+          "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
+          "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
+          "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+          "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
+          "Wisconsin", "Wyoming"
+        ].map((state) => (
+          <option key={state} value={state}>
+            {state}
+          </option>
+        ))}
+      </select>
+
       <button
         type="submit"
         className="w-full rounded-md py-3 bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold transition"
