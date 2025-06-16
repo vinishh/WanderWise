@@ -736,7 +736,7 @@ export default function HomePage() {
 <section
   id="map"
   // className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white"
-  className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white pt-24"
+  className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white pt-40"
 >
   {/* 🇺🇸 Flag-inspired background overlay */}
   <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#1f1f2f] via-[#0c0c0c] to-[#1a1a1a]" />
