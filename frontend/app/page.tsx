@@ -735,7 +735,8 @@ export default function HomePage() {
       </section> */}
 <section
   id="map"
-  className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white"
+  // className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white"
+  className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white pt-24"
 >
   {/* 🇺🇸 Flag-inspired background overlay */}
   <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#1f1f2f] via-[#0c0c0c] to-[#1a1a1a]" />
@@ -823,7 +824,7 @@ export default function HomePage() {
     </div>
   )}
 
-  {/* Scroll Cue (premium style) */}
+  {/* Scroll */}
   <div className="absolute bottom-6 z-10 flex flex-col items-center text-gray-300 animate-pulse">
     <div className="text-xs font-medium tracking-wider mb-1">
       Scroll to Discover More
