@@ -735,8 +735,7 @@ export default function HomePage() {
       </section> */}
 <section
   id="map"
-  // className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white"
-  className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white pt-40"
+  className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white pt-44"
 >
   {/* 🇺🇸 Flag-inspired background overlay */}
   <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#1f1f2f] via-[#0c0c0c] to-[#1a1a1a]" />
@@ -759,7 +758,7 @@ export default function HomePage() {
   </div>
 
   {/* Map itself */}
-  <div className="relative z-10 w-full max-w-7xl px-4 mt-6">
+  <div className="relative z-10 w-full max-w-7xl px-4 mt-3">
     <ComposableMap
       projection="geoAlbersUsa"
       width={1080}
