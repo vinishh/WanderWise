@@ -752,7 +752,7 @@ export default function HomePage() {
     <h2 className="text-5xl sm:text-6xl font-extrabold bg-gradient-to-r from-red-500 via-white to-blue-500 bg-clip-text text-transparent drop-shadow-lg">
       Explore the U.S. Map
     </h2>
-    <p className="mt-4 text-gray-300 text-sm sm:text-base max-w-2xl mx-auto">
+    <p className="mt-2 text-gray-300 text-sm sm:text-base max-w-2xl mx-auto">
       Hover over a state to see its name. Click to explore iconic spots across the country.
     </p>
   </div>
