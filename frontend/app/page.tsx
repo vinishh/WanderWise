@@ -758,7 +758,7 @@ export default function HomePage() {
   </div>
 
   {/* Map itself */}
-  <div className="relative z-10 w-full max-w-7xl px-4 mt-3">
+  <div className="relative z-10 w-full max-w-7xl px-4 mt-0">
     <ComposableMap
       projection="geoAlbersUsa"
       width={1080}
