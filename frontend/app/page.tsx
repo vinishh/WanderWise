@@ -1,529 +1,3 @@
-// 'use client'
-
-// import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
-// import { useRouter } from 'next/navigation'
-// import { useEffect, useState } from 'react'
-// import { auth, provider } from '@/firebase'
-// import {
-//   signInWithPopup,
-//   signOut,
-//   onAuthStateChanged,
-//   User
-// } from 'firebase/auth'
-
-// type Spot = {
-//   id: string
-//   name: string
-//   state: string
-//   category: string
-//   image_url: string
-// }
-
-// export default function HomePage() {
-//   const router = useRouter()
-
-//   const [spots, setSpots] = useState<Spot[]>([])
-//   const [searchTerm, setSearchTerm] = useState("")
-//   const [loading, setLoading] = useState(true)
-//   const [user, setUser] = useState<User | null>(null)
-//   const [visited, setVisited] = useState<string[]>([])
-//   const [tooltipContent, setTooltipContent] = useState<string | null>(null)
-//   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null)
-//   const [newSpotName, setNewSpotName] = useState("")
-//   const [newSpotState, setNewSpotState] = useState("")
-
-//   useEffect(() => {
-//     fetch('http://localhost:8000/api/spots')
-//       .then((res) => res.json())
-//       .then((data) => {
-//         setSpots(data)
-//         setLoading(false)
-//       })
-//       .catch((err) => {
-//         console.error('Failed to load spots:', err)
-//         setLoading(false)
-//       })
-//   }, [])
-
-//   useEffect(() => {
-//     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-//       setUser(user)
-
-//       if (user) {
-//         const token = await user.getIdToken()
-//         try {
-//           const res = await fetch('http://localhost:8000/api/visited', {
-//             headers: { Authorization: token }
-//           })
-//           const data = await res.json()
-//           setVisited(data.visited)
-//         } catch (err) {
-//           console.error('Failed to fetch visited spots:', err)
-//         }
-//       } else {
-//         setVisited([])
-//       }
-//     })
-
-//     return () => unsubscribe()
-//   }, [])
-
-//   const handleLogin = () => {
-//     signInWithPopup(auth, provider).catch((err) =>
-//       console.error('Login error:', err)
-//     )
-//   }
-
-//   const handleLogout = () => {
-//     signOut(auth).catch((err) => console.error('Logout error:', err))
-//   }
-
-//   const handleMarkVisited = async (spotId: string) => {
-//     if (!user) {
-//       alert('You must be signed in to mark spots as visited.')
-//       return
-//     }
-
-//     const token = await user.getIdToken()
-
-//     try {
-//       const res = await fetch('http://localhost:8000/api/visit', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           Authorization: token
-//         },
-//         body: JSON.stringify({ spot_id: spotId })
-//       })
-
-//       if (res.ok) {
-//         alert('Marked as visited!')
-//         setVisited((prev) => [...prev, spotId])
-//       } else {
-//         alert('Failed to mark as visited.')
-//       }
-//     } catch (err) {
-//       console.error('Error marking visited:', err)
-//       alert('Something went wrong.')
-//     }
-//   }
-
-//   const handleAddSpot = async (e: React.FormEvent) => {
-//     e.preventDefault()
-//     if (!newSpotName.trim()) return
-  
-//     try {
-//       const res = await fetch("http://localhost:8000/api/add-spot", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({
-//           name: newSpotName,
-//           state: newSpotState || null
-//         })
-//       })
-  
-//       if (res.ok) {
-//         const newSpot = await res.json()
-//         alert("✅ Spot added successfully!")
-//         setSpots((prev) => [...prev, newSpot])
-//         setNewSpotName("")
-//         setNewSpotState("")
-//       } else {
-//         const err = await res.json()
-//         alert(`❌ Failed: ${err.error || "Unknown error"}`)
-//       }
-//     } catch (err) {
-//       console.error("Add Spot Error:", err)
-//       alert("❌ Something went wrong while adding the spot.")
-//     }
-//   }
-  
-
-//   const visitedStates = Array.from(
-//     new Set(
-//       spots
-//         .filter((spot) => visited.includes(spot.id))
-//         .map((spot) => spot.state)
-//     )
-//   )
-
-//   const allStates = [
-//     "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-//     "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
-//     "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-//     "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
-//     "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
-//     "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-//     "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-//     "Wisconsin", "Wyoming"
-//   ]
-
-//   const filteredSpots = spots.filter((spot) =>
-//     spot.name.toLowerCase().includes(searchTerm.toLowerCase())
-//   )
-
-//   return (
-//     <main className="p-6">
-//       <div className="flex justify-between items-center mb-6">
-//         <h1 className="text-3xl font-bold">Explore the U.S.</h1>
-//         {user ? (
-//           <div className="flex items-center gap-4">
-//             <p className="text-gray-700">Welcome, {user.displayName}</p>
-//             <button
-//               onClick={handleLogout}
-//               className="bg-red-500 text-white px-4 py-2 rounded"
-//             >
-//               Logout
-//             </button>
-//           </div>
-//         ) : (
-//           <button
-//             onClick={handleLogin}
-//             className="bg-blue-600 text-white px-4 py-2 rounded"
-//           >
-//             Sign in with Google
-//           </button>
-//         )}
-//       </div>
-
-//       {/* State dropdown */}
-//       <div className="mb-4 max-w-xs">
-//         <label htmlFor="state-select" className="block mb-1 text-sm font-medium text-gray-200">
-//           Select a State
-//         </label>
-//         <select
-//           id="state-select"
-//           className="w-full bg-neutral-800 text-white border border-gray-600 rounded-md p-2"
-//           onChange={(e) => {
-//             const selected = e.target.value
-//             if (selected) {
-//               router.push(`/state/${encodeURIComponent(selected)}`)
-//             }
-//           }}
-//           defaultValue=""
-//         >
-//           <option value="" disabled>Choose a state</option>
-//           {allStates.map((state) => (
-//             <option key={state} value={state}>{state}</option>
-//           ))}
-//         </select>
-//       </div>
-
-//       {/* US Map */}
-//       <>
-//         <ComposableMap
-//           projection="geoAlbersUsa"
-//           width={980}
-//           height={800}
-//           className="w-full max-w-5xl mx-auto mb-6"
-//         >
-//           <Geographies geography="https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json">
-//             {({ geographies }) =>
-//               geographies.map((geo) => {
-//                 const stateName = geo.properties.name
-//                 return (
-//                   <Geography
-//                     key={geo.rsmKey}
-//                     geography={geo}
-//                     onClick={() =>
-//                       router.push(`/state/${encodeURIComponent(stateName)}`)
-//                     }
-//                     onMouseEnter={(e) => {
-//                       setTooltipContent(stateName)
-//                       setTooltipPosition({ x: e.clientX, y: e.clientY })
-//                     }}
-//                     onMouseLeave={() => {
-//                       setTooltipContent(null)
-//                       setTooltipPosition(null)
-//                     }}
-//                     style={{
-//                       default: {
-//                         fill: visitedStates.includes(stateName)
-//                           ? '#4ade80'
-//                           : '#DDD',
-//                         outline: 'none',
-//                         cursor: 'pointer'
-//                       },
-//                       hover: {
-//                         fill: '#AAA',
-//                         outline: 'none'
-//                       },
-//                       pressed: {
-//                         fill: '#666',
-//                         outline: 'none'
-//                       }
-//                     }}
-//                   />
-//                 )
-//               })
-//             }
-//           </Geographies>
-//         </ComposableMap>
-
-//         {tooltipContent && tooltipPosition && (
-//           <div
-//             className="pointer-events-none fixed z-50 bg-black text-white text-sm px-2 py-1 rounded shadow"
-//             style={{ top: tooltipPosition.y + 10, left: tooltipPosition.x + 10 }}
-//           >
-//             {tooltipContent}
-//           </div>
-//         )}
-//       </>
-
-//       {/* Action buttons */}
-//       <div className="flex flex-wrap gap-4 mb-4">
-//         <a
-//           href="/itinerary"
-//           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-//         >
-//           ✨ Generate AI Trip
-//         </a>
-
-//         <a
-//           href="/profile"
-//           className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
-//         >
-//           👤 View Profile
-//         </a>
-//       </div>
-
-//       {/* Search bar below buttons
-//       <input
-//         type="text"
-//         placeholder="Search for any spot here..."
-//         className="w-full max-w-md mb-6 p-2 rounded border border-gray-600 bg-white text-black placeholder-gray-500"
-
-//         value={searchTerm}
-//         onChange={(e) => setSearchTerm(e.target.value)}
-//       /> */}
-
-
-//       <div className="flex flex-col sm:flex-row gap-4 mb-6 w-full max-w-3xl">
-//         {/* Search bar */}
-//         <input
-//           type="text"
-//           placeholder="Search for any spot here..."
-//           className="flex-1 p-2 rounded border border-gray-600 bg-white text-black placeholder-gray-500"
-//           value={searchTerm}
-//           onChange={(e) => setSearchTerm(e.target.value)}
-//         />
-
-//         {/* Add Spot Form */}
-//         <form
-//           onSubmit={handleAddSpot}
-//           className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto"
-//         >
-//           <input
-//             type="text"
-//             placeholder="Enter new place name you wanna add"
-//             className="p-2 rounded border border-gray-600 bg-white text-black placeholder-gray-500 flex-1"
-//             value={newSpotName}
-//             onChange={(e) => setNewSpotName(e.target.value)}
-//             required
-//           />
-//           <input
-//             type="text"
-//             placeholder="state of the new place"
-//             className="p-2 rounded border border-gray-600 bg-white text-black placeholder-gray-500 flex-1"
-//             value={newSpotState}
-//             onChange={(e) => setNewSpotState(e.target.value)}
-//           />
-//           <button
-//             type="submit"
-//             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 whitespace-nowrap"
-//           >
-//             ➕ Add Spot
-//           </button>
-//         </form>
-//       </div>
-
-
-//       {/* Spot Cards */}
-//       {loading ? (
-//         <p>Loading...</p>
-//       ) : (
-//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-//           {filteredSpots.map((spot) => (
-//             <div
-//               key={spot.id}
-//               className="relative group border rounded-xl shadow hover:shadow-md transition bg-white"
-//             >
-//               <a href={`/spot/${spot.id}`} className="block p-4">
-//                 <img
-//                   src={spot.image_url}
-//                   alt={spot.name}
-//                   className="w-full h-48 object-cover rounded-lg mb-3"
-//                 />
-//                 <h2 className="text-xl font-semibold text-gray-900 group-hover:underline">
-//                   {spot.name}
-//                 </h2>
-//                 <p className="text-sm text-gray-600">
-//                   {spot.state} · {spot.category}
-//                 </p>
-//               </a>
-
-//               {visited.includes(spot.id) ? (
-//                 <div className="absolute top-2 right-2 bg-white text-green-600 font-semibold px-2 py-1 rounded shadow">
-//                   ✅ Visited
-//                 </div>
-//               ) : (
-//                 <button
-//                   onClick={() => handleMarkVisited(spot.id)}
-//                   className="absolute bottom-2 right-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
-//                 >
-//                   ✅ Mark as Visited
-//                 </button>
-//               )}
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </main>
-//   )
-// }
-
-
-// // frontend/app/page.tsx
-// 'use client'
-
-// import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
-// import { useRouter } from 'next/navigation'
-// import { useEffect, useState } from 'react'
-// import { auth, provider } from '@/firebase'
-// import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth'
-
-// // Import your new components
-// import HeroSection from './components/HeroSection'
-// import MapSection from './components/MapSection'
-// import SpotlightSection from './components/SpotlightSection'
-
-// export type Spot = {
-//   id: string
-//   name: string
-//   state: string
-//   category: string
-//   image_url: string
-//   description?: string
-// }
-
-// export default function HomePage() {
-//   const router = useRouter()
-//   const [spots, setSpots] = useState<Spot[]>([])
-//   const [searchTerm, setSearchTerm] = useState("")
-//   const [loading, setLoading] = useState(true)
-//   const [user, setUser] = useState<User | null>(null)
-//   const [visited, setVisited] = useState<string[]>([])
-  
-//   // Fetch initial spots
-//   useEffect(() => {
-//     fetch('http://localhost:8000/api/spots')
-//       .then((res) => res.json())
-//       .then((data) => {
-//         setSpots(data)
-//         setLoading(false)
-//       })
-//       .catch((err) => {
-//         console.error('Failed to load spots:', err)
-//         setLoading(false)
-//       })
-//   }, [])
-
-//   // Handle Auth and fetch visited spots
-//   useEffect(() => {
-//     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-//       setUser(currentUser)
-//       if (currentUser) {
-//         try {
-//           const token = await currentUser.getIdToken()
-//           const res = await fetch('http://localhost:8000/api/visited', {
-//             headers: { Authorization: token }
-//           })
-//           const data = await res.json()
-//           setVisited(data.visited || [])
-//         } catch (err) {
-//           console.error('Failed to fetch visited spots:', err)
-//           setVisited([])
-//         }
-//       } else {
-//         setVisited([])
-//       }
-//     })
-//     return () => unsubscribe()
-//   }, [])
-
-//   const handleLogin = () => signInWithPopup(auth, provider).catch(console.error)
-//   const handleLogout = () => signOut(auth).catch(console.error)
-
-//   const handleMarkVisited = async (spotId: string) => {
-//     if (!user) {
-//       alert('Please sign in to mark spots as visited.')
-//       return
-//     }
-//     const token = await user.getIdToken()
-//     try {
-//       const res = await fetch('http://localhost:8000/api/visit', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json', Authorization: token },
-//         body: JSON.stringify({ spot_id: spotId })
-//       })
-//       if (res.ok) {
-//         setVisited(prev => [...prev, spotId])
-//       }
-//     } catch (err) {
-//       console.error('Error marking spot as visited:', err)
-//     }
-//   }
-
-//   const handleAddSpot = async (name: string, state: string) => {
-//     if (!name.trim()) return
-//     try {
-//       const res = await fetch("http://localhost:8000/api/add-spot", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ name, state: state || null })
-//       })
-//       if (res.ok) {
-//         const newSpot = await res.json()
-//         setSpots((prev) => [newSpot, ...prev]) // Add new spot to the top
-//         return true // Indicate success
-//       }
-//       return false
-//     } catch (err) {
-//       console.error(err)
-//       return false
-//     }
-//   }
-
-//   const filteredSpots = spots.filter((spot) => 
-//     spot.name.toLowerCase().includes(searchTerm.toLowerCase())
-//   )
-//   const visitedStates = Array.from(new Set(spots.filter(s => visited.includes(s.id)).map(s => s.state)))
-
-//   return (
-//     <main className="min-h-screen antialiased">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
-//         <HeroSection user={user} onLogin={handleLogin} onLogout={handleLogout} />
-        
-//         <MapSection router={useRouter()} visitedStates={visitedStates} />
-        
-//         <SpotlightSection
-//           spots={filteredSpots}
-//           loading={loading}
-//           visitedIds={visited}
-//           onMarkVisited={handleMarkVisited}
-//           onAddSpot={handleAddSpot}
-//           searchTerm={searchTerm}
-//           setSearchTerm={setSearchTerm}
-//         />
-
-//       </div>
-//     </main>
-//   )
-// }
-
-
-
 'use client'
 
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
@@ -532,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { auth, provider } from '@/firebase'
 import Navbar from './components/Navbar'
 import { motion } from 'framer-motion'
+import useSWR from 'swr'
 
 import {
   signInWithPopup,
@@ -548,6 +23,8 @@ type Spot = {
   image_url: string
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
 export default function HomePage() {
   const router = useRouter()
 
@@ -560,16 +37,50 @@ export default function HomePage() {
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null)
   const [newSpotName, setNewSpotName] = useState("")
   const [newSpotState, setNewSpotState] = useState("")
+  const [useLocalCache, setUseLocalCache] = useState(true)
 
+  // Load from localStorage if cache exists and is fresh
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/spots`)
-      .then((res) => res.json())
-      .then((data) => {
-        setSpots(data)
+    const local = localStorage.getItem('spots')
+    const time = localStorage.getItem('spots_cache_time')
+
+    if (local && time) {
+      const age = Date.now() - parseInt(time)
+      const oneDay = 24 * 60 * 60 * 1000
+
+      if (age < oneDay) {
+        setSpots(JSON.parse(local))
+        setUseLocalCache(true)
         setLoading(false)
-      })
-      .catch(() => setLoading(false))
+      } else {
+        localStorage.removeItem('spots')
+        localStorage.removeItem('spots_cache_time')
+        setUseLocalCache(false)
+      }
+    } else {
+      setUseLocalCache(false)
+    }
   }, [])
+
+  // Fetch fresh data if not using cache
+  const { data } = useSWR(
+    !useLocalCache ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/spots` : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  )
+
+  // Save fresh data to localStorage when received
+  useEffect(() => {
+    if (data) {
+      localStorage.setItem('spots', JSON.stringify(data))
+      localStorage.setItem('spots_cache_time', Date.now().toString())
+      setSpots(data)
+      setLoading(false)
+    }
+  }, [data])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -627,7 +138,6 @@ export default function HomePage() {
       const err = await res.json()
       alert(`❌ Failed: ${err.error || "Unknown error"}`)
     }
-    
   }
 
   const visitedStates = Array.from(
@@ -680,59 +190,6 @@ export default function HomePage() {
   </div>
 </section>
 
-
-      {/* Map */}
-      {/* <section className="relative max-w-6xl mx-auto mb-16">
-        <h2 className="text-2xl font-semibold mb-4">🗺️ Click a state to explore</h2>
-        <ComposableMap projection="geoAlbersUsa" className="w-full" style={{ height: 500 }}>
-          <Geographies geography="https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json">
-            {({ geographies }) =>
-              geographies.map((geo) => {
-                const stateName = geo.properties.name
-                return (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    onClick={() => router.push(`/state/${encodeURIComponent(stateName)}`)}
-                    onMouseEnter={(e) => {
-                      setTooltipContent(stateName)
-                      setTooltipPosition({ x: e.clientX, y: e.clientY })
-                    }}
-                    onMouseLeave={() => {
-                      setTooltipContent(null)
-                      setTooltipPosition(null)
-                    }}
-                    style={{
-                      default: {
-                        fill: visitedStates.includes(stateName) ? '#4ade80' : '#444',
-                        outline: 'none',
-                        cursor: 'pointer'
-                      },
-                      hover: {
-                        fill: '#666',
-                        outline: 'none'
-                      },
-                      pressed: {
-                        fill: '#999',
-                        outline: 'none'
-                      }
-                    }}
-                  />
-                )
-              })
-            }
-          </Geographies>
-        </ComposableMap>
-
-        {tooltipContent && tooltipPosition && (
-          <div
-            className="pointer-events-none fixed z-50 bg-black text-white text-xs px-2 py-1 rounded shadow"
-            style={{ top: tooltipPosition.y + 10, left: tooltipPosition.x + 10 }}
-          >
-            {tooltipContent}
-          </div>
-        )}
-      </section> */}
 <section
   id="map"
   className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden text-white pt-44"
