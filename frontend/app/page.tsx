@@ -370,7 +370,7 @@ export default function HomePage() {
   <div className="max-w-7xl mx-auto">
     <h2 className="text-2xl font-semibold mb-6 text-white">🌟 Featured Spots</h2>
     {loading ? (
-      <p className="text-gray-300">Loading...</p>
+      <p className="text-gray-300">LOADING........ PLEASE WAIT IT TAKES A FEW SECONDS TO LOAD THE SPOTS</p>
     ) : (
       <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
         {filteredSpots.map((spot) => (
